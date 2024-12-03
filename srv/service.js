@@ -3,7 +3,7 @@ const cds = require('@sap/cds');
 module.exports = cds.service.impl(async function () {
   const { Request_Header, Request_Item } = this.entities;
 
-  // Request_No auto-numbering for Request_Header
+  // Request_No auto-numbering for Request_Header 
   this.before('CREATE', 'Request_Header', async (req) => {
     const DEFAULT_START = 1000000000; // Starting value for Request_No
 
@@ -17,10 +17,12 @@ module.exports = cds.service.impl(async function () {
       req.data.Request_No = DEFAULT_START; // Assign default start value if no records exist
     } else {
       const highestRequestNo = existingRecords[0].Request_No;
-      req.data.Request_No = highestRequestNo + 1; // Increment and assign
+      req.data.Request_No = Number(highestRequestNo) + 1; // Increment and assign
     }
   });
 
+
+  // Request_No auto-numbering for Request_Items_no
   this.before('NEW', 'Request_Item.drafts', async req => {
 
     const DEFAULT_START = 10;
@@ -43,6 +45,7 @@ module.exports = cds.service.impl(async function () {
     }
 
 
+    // updating the req_item_no when user delete any record 
     this.after('DELETE', 'Request_Item.drafts', async req => {
 
       // Step 1: Select all remaining items after the deletion
@@ -70,7 +73,45 @@ module.exports = cds.service.impl(async function () {
       // Optionally, log the updated data to verify
       console.log('Items renumbered successfully');
     });
+  });
+
+  // status code logic
 
 
-  })
+  this.after('CREATE', 'Request_Header', async (req) => {
+    var item = req;
+    var status_code = req.Status_code
+    console.log(status_code)
+
+    if (status_code = "open") {
+      await UPDATE(Request_Header)
+        .set({ Status_code: 'Saved' })  // Update the Req_Item_No field
+        .where({ ID: item.ID });  // Use the item's ID to identify it for updating
+
+      const updateitems = await SELECT.from(Request_Header).where({ ID: item.ID });;
+      console.log(updateitems);
+
+    }
+  });
+
+
+  // send for approval action button 
+
+  this.on('sendforapproval' , async (req)=>{
+
+    
+    console.log(req.params[0].ID)
+
+    await UPDATE(Request_Header)
+        .set({ Status_code: 'InApproval' })  // Update the Req_Item_No field
+        .where({ ID: req.params[0].ID });  // Use the item's ID to identify it for updating
+
+      const updateitems = await SELECT.from(Request_Header).where({ ID: req.params[0].ID });;
+      console.log(updateitems);
+
+
+
+
+  });
+
 });

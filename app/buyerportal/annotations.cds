@@ -47,7 +47,7 @@ annotate service.Request_Header with @(
 
         {
             $Type : 'UI.DataField',
-            Value : Status.code,
+            Value : Status_code,
             Label: 'Status Code'
         },
 
@@ -114,7 +114,7 @@ annotate service.Request_Header with @(
         Data : [
             {
                 $Type : 'UI.DataField',
-                Value : Status.code,
+                Value : Status_code,
                  Label : 'Status'
             },
             {
@@ -256,4 +256,22 @@ annotate service.Request_Header @(Common.SideEffects #ReactonItemDeletion: {
     TargetEntities  : ['_Items'], // The target collection/table to be refreshed (the list of bookings)
     TargetProperties: []  // This can be left empty or specify relevant properties if needed
 });
+
+annotate service.Request_Header @(Common.SideEffects #ReactOnCommentCreation: {
+    SourceEntities  : ['_Comments'],      // The entity triggering the side effect (Comments)
+    TargetEntities  : ['_Comments'],          // Refresh the current Request_Header entity
+    TargetProperties: []                  // Refresh all relevant fields, no specific property defined
+});
+
+
+// disable the status field so that no one can edit during create or edit 
+
+annotate service.Request_Header with {
+    Status @(
+        readonly,
+    )
+};
+
+
+
 

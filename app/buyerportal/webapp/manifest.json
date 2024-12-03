@@ -43,7 +43,7 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.130.2",
       "libs": {
@@ -137,6 +137,42 @@
                 "_Items": {
                   "detail": {
                     "route": "Request_ItemObjectPage"
+                  }
+                }
+              },
+              "content": {
+                "body": {
+                  "sections": {
+                    "Comments": {
+                      "template": "sravan.ust.buyerportal.ext.fragment.Comments",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "_Items::LineItem"
+                      },
+                      "title": "Comments"
+                    },
+                    "Attachments": {
+                      "template": "sravan.ust.buyerportal.ext.fragment.Attachments",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "Comments"
+                      },
+                      "title": "Attachments"
+                    }
+                  }
+                },
+                "header": {
+                  "actions": {
+                    "sendapproval": {
+                      "press": "sravan.ust.buyerportal.ext.controller.Sendforapproval._onapproval",
+                      "visible": true,
+                      "enabled": true,
+                      "text": "send for approval",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "DeleteAction"
+                      }
+                    }
                   }
                 }
               }
