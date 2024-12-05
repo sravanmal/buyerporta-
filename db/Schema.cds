@@ -63,7 +63,6 @@ context transaction {
 
 
     // media 
-
     entity media : cuid, managed {
     @Core.ContentDisposition.Filename: fileName
     @Core.ContentDisposition.Type: 'inline'

@@ -1,7 +1,7 @@
 const cds = require('@sap/cds');
 
 module.exports = cds.service.impl(async function () {
-  const { Request_Header, Request_Item } = this.entities;
+  const { Request_Header, Request_Item , media} = this.entities;
 
   // Request_No auto-numbering for Request_Header 
   this.before('CREATE', 'Request_Header', async (req) => {
@@ -20,6 +20,36 @@ module.exports = cds.service.impl(async function () {
       req.data.Request_No = Number(highestRequestNo) + 1; // Increment and assign
     }
   });
+
+  // updating the req_item_no when user delete any record 
+  this.after('DELETE', 'Request_Item.drafts', async req => {
+
+    // Step 1: Select all remaining items after the deletion
+    var existingItems = await SELECT.from(Request_Item.drafts);
+    console.log(existingItems)
+
+    // Step 2: Renumber the remaining items
+    let baseNumber = 10;
+
+    // Loop through the existing items and update their Req_Item_No
+    for (let item of existingItems) {
+      item.Req_Item_No = baseNumber;
+
+      // Step 3: Update each item in the drafts table
+      await UPDATE(Request_Item.drafts)
+        .set({ Req_Item_No: item.Req_Item_No })  // Update the Req_Item_No field
+        .where({ ID: item.ID });  // Use the item's ID to identify it for updating
+
+      const updateitems = await SELECT.from(Request_Item.drafts);
+      console.log(updateitems);
+
+      baseNumber += 10;  // Increment baseNumber for the next item
+    }
+
+    // Optionally, log the updated data to verify
+    console.log('Items renumbered successfully');
+  });
+
 
 
   // Request_No auto-numbering for Request_Items_no
@@ -44,35 +74,6 @@ module.exports = cds.service.impl(async function () {
       req.data.Req_Item_No = highestReqItemNo + 10;
     }
 
-
-    // updating the req_item_no when user delete any record 
-    this.after('DELETE', 'Request_Item.drafts', async req => {
-
-      // Step 1: Select all remaining items after the deletion
-      var existingItems = await SELECT.from(Request_Item.drafts);
-      console.log(existingItems)
-
-      // Step 2: Renumber the remaining items
-      let baseNumber = 10;
-
-      // Loop through the existing items and update their Req_Item_No
-      for (let item of existingItems) {
-        item.Req_Item_No = baseNumber;
-
-        // Step 3: Update each item in the drafts table
-        await UPDATE(Request_Item.drafts)
-          .set({ Req_Item_No: item.Req_Item_No })  // Update the Req_Item_No field
-          .where({ ID: item.ID });  // Use the item's ID to identify it for updating
-
-        const updateitems = await SELECT.from(Request_Item.drafts);
-        console.log(updateitems);
-
-        baseNumber += 10;  // Increment baseNumber for the next item
-      }
-
-      // Optionally, log the updated data to verify
-      console.log('Items renumbered successfully');
-    });
   });
 
   // status code logic

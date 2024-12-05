@@ -14,7 +14,7 @@
 				inset="true"
 				autoPopinMode="true"
 				hiddenInPopin="None"
-				items="{path: '{_Comments}', templateShareable: false}"
+				items="{path: '_attachments', templateShareable: false}"
 				selectionChange="handler.onSelectionChange">
 
 				<headerToolbar>

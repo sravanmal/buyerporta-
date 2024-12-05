@@ -9,10 +9,14 @@ sap.ui.define([
             var that = this ;
             MessageToast.show("Custom handler invoked.");
             const oUploadSetTable = this.byId("table-uploadSet");
+            var oFileUploader = this.byId("fileUploader");
+            var oDataModel = that.getBindingContext().getModel()
+            const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
             var item = oEvent.getParameter("item")
-			    Module._createEntity(item , that)
-				.then((id) => {
-					Module._uploadContent(item, id , oUploadSetTable);
+			    Module._createEntity(item , that , sPath)
+				.then((id ) => {
+					Module._uploadContent(item, id , oUploadSetTable , sPath);
+                    
 				})
 				.catch((err) => {
 					console.log(err);
@@ -20,17 +24,24 @@ sap.ui.define([
         },
         // after upload completed
         onUploadCompleted: function(oEvent) {
-            const oUploadSetTable = this.byId("table-uploadSet");
-            oUploadSetTable.getItems("items")
-            const oBinding = oUploadSetTable.getBinding("items");
-            oBinding.refresh();
+            // const oUploadSetTable = this.byId("table-uploadSet");
+            // oUploadSetTable.getItems("items")
+            // const oBinding = oUploadSetTable.getBinding("items");
+            // oBinding.refresh();
+
+            var that = this;
+            that.refresh();
 
         },
 
         // previewing the file 
         openPreview: function(oEvent) {
-			const originalUrl = oEvent.getSource().getBindingContext().getProperty("url");
-            const sFileUrl = Module.transformUrl(originalUrl);
+			const id = oEvent.getSource().getBindingContext().getProperty("ID");
+            var that = this;
+
+            var oDataModel = that.getBindingContext().getModel()
+            const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
+            const sFileUrl = `${sPath}(ID=${id},IsActiveEntity=true)/content`;
 
             if (sFileUrl) {
                 fetch(sFileUrl)
@@ -68,31 +79,13 @@ sap.ui.define([
             }
 		},
 
-        // transforming the url to the path 
-        transformUrl: function(originalUrl) {
-            // Extract the media ID from the original URL using regex
-            const idMatch = originalUrl.match(/media\(([^)]+)\)/);
-            
-            if (idMatch && idMatch[1]) {
-                const id = idMatch[1];  // Extracted ID
-                // Construct the new URL format
-                const newUrl = `/odata/v4/customer-master/media(${id})/content`;
-                return newUrl;
-            } else {
-                console.error("ID not found in the URL");
-                return null;
-            }
-        }, 
-        
         // post call
-         _createEntity: function (item , that) {
+         _createEntity: function (item , that , sPath) {
             var data = {
                 MediaType: item.getMediaType(),
                 fileName: item.getFileName(),
                 size: item.getFileObject().size
             };
-            var oDataModel = that.getBindingContext().getModel()
-            const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
 
             var settings = {
                 url: sPath,
@@ -114,9 +107,9 @@ sap.ui.define([
         })				
     },
     // put call
-    _uploadContent: function (item, id , oUploadSetTable) {
-        const sPath = oDataModel.sServiceUrl + this.getBindingContext().sPath.slice(1, this.getBindingContext().sPath.length) + "/_attachments" + "/content";
-        var url = `{sPath}`
+    _uploadContent: function (item, id , oUploadSetTable , sPath) {
+        console.log(sPath);
+        const url = `${sPath}(ID=${id},IsActiveEntity=false)/content`;
         var file = item._oFileObject;
 
                 if (file) {
@@ -127,7 +120,7 @@ sap.ui.define([
                         console.log(byteArray);
                         fetch(url, {
                             method: 'PUT',
-                            body: byteArray
+                            body: fileContent
                         })
                         .then(function(putResponse) {
                             if (!putResponse.ok) {
@@ -140,6 +133,7 @@ sap.ui.define([
                         .catch(function(error) {
                             console.error("Error in upload sequence:", error);
                         });
+
                     };
                     reader.readAsArrayBuffer(file);
                 };
@@ -158,8 +152,13 @@ sap.ui.define([
     // manually downloading the file function
     manualDownload: function(context) {
         // Assuming `context.url` is the URL of the file
-        const originalUrl = context.getProperty("url");
-        const sFileUrl = Module.transformUrl(originalUrl);
+
+        const id = oEvent.getSource().getBindingContext().getProperty("ID");
+        var that = this;
+
+        var oDataModel = that.getBindingContext().getModel()
+        const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
+        const sFileUrl = `${sPath}(ID=${id},IsActiveEntity=true)/content`;
         const filename = context.getProperty("fileName") || 'downloadedFile';
     
         // Create a temporary anchor element
@@ -203,13 +202,19 @@ sap.ui.define([
 
     // delete 
     onRemoveButtonPress : function(oContext){
+
+        var that = this;
+        const id = oContext.getProperty("ID");
+        var oDataModel = that.getBindingContext().getModel()
+        const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
+        const sFileUrl = `${sPath}(ID=${id},IsActiveEntity=true)`;
         const oContexts = this.byId("table-uploadSet").getSelectedContexts();
         console.log(oContexts);
         if (oContexts && oContexts.length) {
             oContexts.forEach((oContext) => 
             {
-                const ID = oContext.getProperty("ID");
-                fetch(`/odata/v4/customer-master/media(${ID})`, {
+    
+                fetch(sFileUrl, {
                     method: 'DELETE',
                 }).then((response)=>{
                     if(!response.ok){
