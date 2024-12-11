@@ -5,8 +5,9 @@ sap.ui.define([
 
     return {
         _onapproval: function(oEvent) {
+            var that = this;
             var oDataModel = this.getBindingContext().getModel()
-            const sPath = oDataModel.sServiceUrl + this.getBindingContext().sPath.slice(1, this.getBindingContext().sPath.length) + "/sendforapproval";
+            const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/sendforapproval";
 
             $.ajax({
                 url: sPath,
@@ -20,7 +21,8 @@ sap.ui.define([
                 success: function (json) {
                     
                     MessageToast.show("approval send");
-                    window.location.reload(); 
+                    // window.location.reload(); 
+                    that.getBindingContext().refresh()
                 },
                 error: function (error) {
                     // Handle the error scenario

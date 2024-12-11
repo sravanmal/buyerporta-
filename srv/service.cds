@@ -9,6 +9,7 @@ service Myservice @(path:'Myservice' ){
             TargetProperties: ['in/Status/code']            // Property to refresh
         }
         action sendforapproval(); 
+        action copyheader();
     };
     
     

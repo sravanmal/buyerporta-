@@ -206,36 +206,35 @@ sap.ui.define([
     },
 
     // delete 
-    onRemoveButtonPress : function(oContext){
+    onRemoveButtonPress : function(oEvent){
+
 
         var that = this;
-        const id = oContext.getProperty("ID");
-        var oDataModel = that.getBindingContext().getModel()
-        const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
-        const sFileUrl = `${sPath}(ID=${id},IsActiveEntity=true)`;
-        const oContexts = this.byId("table-uploadSet").getSelectedContexts();
-        console.log(oContexts);
-        if (oContexts && oContexts.length) {
-            oContexts.forEach((oContext) => 
-            {
-    
+        const oContexts1 = this.byId("table-uploadSet").getSelectedContexts();
+        if (oContexts1 && oContexts1.length) {
+            oContexts1.forEach((oContext) => {
+
+                const id = oContext.getProperty("ID");
+                var oDataModel = that.getBindingContext().getModel()
+                const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
+                const sFileUrl = `${sPath}(ID=${id},IsActiveEntity=true)`;
+
                 fetch(sFileUrl, {
                     method: 'DELETE',
                 }).then((response)=>{
                     if(!response.ok){
                         throw new Error("Delete request failed.");
                     }
-                    const oUploadSetTable = this.byId("table-uploadSet");
-                    const oBinding = oUploadSetTable.getBinding("items");
-                    oBinding.refresh();
                 })
-            })
-        }
-       
+
+                that.getBindingContext().refresh()
 
 
-    }	
+            });
+        }  
     }
+}
+    
 
     return Module;
 });

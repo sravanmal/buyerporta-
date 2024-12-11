@@ -16,7 +16,7 @@
         <!-- Comments Panel -->
         <Panel
             backgroundDesign="Transparent"
-            headerText="{i18n>ObjectCommentsTabTitle}">
+            headerText="{i18n>Comments}">
             <content>
                 <!-- Input for Adding Comments -->
                 <FeedInput post="handler.onPost" visible="{ui>/isEditable}"/>

@@ -67,16 +67,13 @@ annotate service.Request_Header with @(
     UI.Facets:[
         {
             $Type : 'UI.CollectionFacet',
-            Label: 'General Information',
             Facets : [
                 {
                     $Type : 'UI.ReferenceFacet',
-                    Label: 'Details',
                     Target : '@UI.Identification'
                 },
                 {
                     $Type : 'UI.ReferenceFacet',
-                    Label: 'Configuration Details',
                     Target : '@UI.FieldGroup#Spiderman'
                 },
             ],
@@ -122,6 +119,11 @@ annotate service.Request_Header with @(
                 Value : createdBy,
                 Label : 'Created By'
             },
+            {
+                $Type : 'UI.DataField',
+                Value : Request_Description,
+                Label : 'Request Description'
+            }
         ],
     }
 );
@@ -219,6 +221,11 @@ annotate service.Request_Item with @(
             Value : Material,
             Label : 'Material'
         },
+        {
+            $Type : 'UI.DataField',
+            Value : Material_Description,
+            Label : 'Material Description'
+        }
     ],
 
     // reference facet 

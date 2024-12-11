@@ -1,7 +1,7 @@
 const cds = require('@sap/cds');
 
 module.exports = cds.service.impl(async function () {
-  const { Request_Header, Request_Item , media} = this.entities;
+  const { Request_Header, Request_Item, media } = this.entities;
 
   // Request_No auto-numbering for Request_Header 
   this.before('CREATE', 'Request_Header', async (req) => {
@@ -84,15 +84,15 @@ module.exports = cds.service.impl(async function () {
     // var sPath = await 
     var sPath = req.url;
     var id = req.ID;
-    const url  = `${sPath}(ID=${id},IsActiveEntity=false)/url`
+    const url = `${sPath}(ID=${id},IsActiveEntity=false)/content`
 
 
     await UPDATE(media.drafts)
-        .set({ url: url })  // Update the Req_Item_No field
-        .where({ ID: id });  // Use the item's ID to identify it for updating
+      .set({ url: url })  // Update the Req_Item_No field
+      .where({ ID: id });  // Use the item's ID to identify it for updating
 
 
-});
+  });
 
 
   // status code logic
@@ -117,20 +117,60 @@ module.exports = cds.service.impl(async function () {
 
   // send for approval action button 
 
-  this.on('sendforapproval' , async (req)=>{
+  this.on('sendforapproval', async (req) => {
 
-    
+
     console.log(req.params[0].ID)
 
     await UPDATE(Request_Header)
-        .set({ Status_code: 'InApproval' })  // Update the Req_Item_No field
-        .where({ ID: req.params[0].ID });  // Use the item's ID to identify it for updating
+      .set({ Status_code: 'InApproval' })  // Update the Req_Item_No field
+      .where({ ID: req.params[0].ID });  // Use the item's ID to identify it for updating
 
-      const updateitems = await SELECT.from(Request_Header).where({ ID: req.params[0].ID });;
-      console.log(updateitems);
+    const updateitems = await SELECT.from(Request_Header).where({ ID: req.params[0].ID });;
+    console.log(updateitems);
+
+  });
+
+  // copy header 
+
+  this.on('copyheader', async (req) => {
+
+    
+
+    // getting the id from the request 
+    console.log(req.params[0].ID);
+
+    // getting the whole data with the help of id 
+
+    const copieddata = await SELECT.from( `BuyerPortal_ust_db_transaction_Request_Header`)
+      .columns(
+        `PR_Number`,
+        `PRType`,
+        `Request_Description`,
+        `Status_code`)
+    .where({ ID: req.params[0].ID });
+
+      const copieddata_Items = await SELECT.from(Request_Item)
+      .columns(
+        `PR_Item_Number`,
+        `Material`,
+        `Material_Description`,
+        `PurOrg`, 
+        `Plant`,
+        `Status`,
+      ).where({ _Header_ID: req.params[0].ID });
+
+      const copieddata_media = await SELECT.from(media).where({ _HeaderAttachments_ID: req.params[0].ID });
 
 
 
+    console.log(copieddata);
+    console.log(copieddata_Items)
+    console.log(copieddata_media)
+
+    // create the same data with new req_no 
+
+    await INSERT.into(Request_Header).entries(copieddata , copieddata_Items)
 
   });
 

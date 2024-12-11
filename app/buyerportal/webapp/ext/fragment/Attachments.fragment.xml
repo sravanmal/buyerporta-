@@ -3,11 +3,11 @@
 	xmlns:upload="sap.m.upload" xmlns:f="sap.f" xmlns:vm="sap.ui.fl.variants"
 	displayBlock="true" height="100%">
 	
-	<f:DynamicPage id="page" core:require="{ handler: 'sravan/ust/buyerportal/ext/fragment/Attachments'}">
+	<f:DynamicPage id="page"  core:require="{ handler: 'sravan/ust/buyerportal/ext/fragment/Attachments'}">
 		<f:content>
 			<Table
 				id="table-uploadSet"
-				width="auto"
+				width="100%"
 				mode="MultiSelect"
 				sticky="ColumnHeaders,HeaderToolbar"
 				fixedLayout="false"

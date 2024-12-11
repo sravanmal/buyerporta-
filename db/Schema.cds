@@ -13,7 +13,7 @@ context transaction {
         Status : Association to Status;                                                      // Status Code
         PRType : String;                                                                     // PR type       
         _Items : Composition of many Request_Item on _Items._Header = $self;                 // items 
-        Request_Description : String;                                                        //  .Request Description
+        Request_Description : String @mandatory ;                                                        //  .Request Description
         _Comments : Composition of many Comments on _Comments._headercomment = $self;        // comments
         Request_No : String(10);                                                             // Request No
         _attachments : Composition of many media on _attachments._HeaderAttachments = $self
@@ -25,12 +25,12 @@ context transaction {
     entity Request_Item : cuid , managed {
 
         PR_Item_Number : String(10);                // PR number
-        Material : String;                          // .Material 
-        Material_Description : String;              // Material Description
+        Material : String @mandatory;                          // .Material 
+        Material_Description : String @mandatory;              // Material Description
         PurOrg : String;                            // .PurOrg
-        Plant  : String;                            // .Plant
+        Plant  : String @mandatory;                            // .Plant
         Status : String;                            // Status 
-        Quantity : Integer;                         // Quantity
+        Quantity : Integer @mandatory;                         // Quantity
         UoM : String;                               // Unit of Mass (uom)
         Price : Decimal;                            // Price 
         Currency: Currency;                         // currency

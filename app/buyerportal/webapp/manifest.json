@@ -172,6 +172,16 @@
                         "placement": "After",
                         "anchor": "DeleteAction"
                       }
+                    },
+                    "copyheader": {
+                      "press": "sravan.ust.buyerportal.ext.controller.Copyheader._oncopyheader",
+                      "visible": true,
+                      "enabled": true,
+                      "text": "copy header",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "sendapproval"
+                      }
                     }
                   }
                 }
