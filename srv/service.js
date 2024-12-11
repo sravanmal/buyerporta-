@@ -76,6 +76,25 @@ module.exports = cds.service.impl(async function () {
 
   });
 
+
+  // update url 
+
+  this.after('NEW', 'media.drafts', async (req) => {
+    console.log('Create called')
+    // var sPath = await 
+    var sPath = req.url;
+    var id = req.ID;
+    const url  = `${sPath}(ID=${id},IsActiveEntity=false)/url`
+
+
+    await UPDATE(media.drafts)
+        .set({ url: url })  // Update the Req_Item_No field
+        .where({ ID: id });  // Use the item's ID to identify it for updating
+
+
+});
+
+
   // status code logic
 
 

@@ -81,10 +81,12 @@ sap.ui.define([
 
         // post call
          _createEntity: function (item , that , sPath) {
+        
             var data = {
                 MediaType: item.getMediaType(),
                 fileName: item.getFileName(),
-                size: item.getFileObject().size
+                size: item.getFileObject().size,
+                url : sPath
             };
 
             var settings = {
@@ -128,6 +130,9 @@ sap.ui.define([
                             }
                             MessageToast.show("File uploaded and data updated successfully.");
                             
+                            var data = {
+                                url : surl
+                            };
 
                         })
                         .catch(function(error) {
@@ -150,28 +155,28 @@ sap.ui.define([
     },
 
     // manually downloading the file function
-    manualDownload: function(context) {
-        // Assuming `context.url` is the URL of the file
-
-        const id = oEvent.getSource().getBindingContext().getProperty("ID");
-        var that = this;
-
-        var oDataModel = that.getBindingContext().getModel()
-        const sPath = oDataModel.sServiceUrl + that.getBindingContext().sPath.slice(1, that.getBindingContext().sPath.length) + "/_attachments";
-        const sFileUrl = `${sPath}(ID=${id},IsActiveEntity=true)/content`;
-        const filename = context.getProperty("fileName") || 'downloadedFile';
+    manualDownload: function (context) {
+        try {
+            // Get the necessary properties
+            const sFileUrl = context.getProperty("url");
+            const filename = context.getProperty("fileName") || "downloadedFile";
     
-        // Create a temporary anchor element
-        const anchor = document.createElement('a');
-        anchor.href = sFileUrl;
-        anchor.download = filename;
-        
-        // Append anchor to the body, trigger download, then remove it
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
+            // Create a temporary anchor element for download
+            const anchor = document.createElement("a");
+            anchor.href = sFileUrl ;
+            anchor.download = filename;
+    
+            // Append to body, trigger download, then remove it
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+    
+            console.log("Download triggered successfully for:", filename);
+        } catch (error) {
+            console.error("Error in manualDownload:", error);
+        }
     },
-
+    
 
     // Table row selection handler
 		onSelectionChange: function(oEvent) {	

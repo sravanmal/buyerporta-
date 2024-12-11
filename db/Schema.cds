@@ -34,7 +34,7 @@ context transaction {
         UoM : String;                               // Unit of Mass (uom)
         Price : Decimal;                            // Price 
         Currency: Currency;                         // currency
-        Req_Item_No : String(10);                       // Request Item Number 
+        Req_Item_No : Integer;                       // Request Item Number 
         _Header : Association to Request_Header;
 
     }
@@ -66,8 +66,8 @@ context transaction {
     entity media : cuid, managed {
     @Core.ContentDisposition.Filename: fileName
     @Core.ContentDisposition.Type: 'inline'
-    @Core.MediaType: MediaType
-    _HeaderAttachments : Association to Request_Header; 
+    _HeaderAttachments : Association to Request_Header;
+    @Core.MediaType: MediaType 
     content: LargeBinary;
     fileName : String;
     @Core.IsMediaType: true
