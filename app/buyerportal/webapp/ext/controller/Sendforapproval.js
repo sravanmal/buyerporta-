@@ -23,6 +23,8 @@ sap.ui.define([
                     MessageToast.show("approval send");
                     // window.location.reload(); 
                     that.getBindingContext().refresh()
+                    // refreshing the model 
+                    that.getModel().refresh()
                 },
                 error: function (error) {
                     // Handle the error scenario

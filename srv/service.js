@@ -2,6 +2,7 @@ const cds = require('@sap/cds');
 
 module.exports = cds.service.impl(async function () {
   const { Request_Header, Request_Item, media } = this.entities;
+  const { uuid } = cds.utils
 
   // Request_No auto-numbering for Request_Header 
   this.before('CREATE', 'Request_Header', async (req) => {
@@ -135,10 +136,11 @@ module.exports = cds.service.impl(async function () {
 
   this.on('copyheader', async (req) => {
 
-    
-
     // getting the id from the request 
     console.log(req.params[0].ID);
+
+    // generating the uuid for the new record 
+    let ID = uuid()
 
     // getting the whole data with the help of id 
 
@@ -150,6 +152,10 @@ module.exports = cds.service.impl(async function () {
         `Status_code`)
     .where({ ID: req.params[0].ID });
 
+    // adding the generated id to the copied data so that we can join items and header
+        copieddata[0].ID = ID;
+
+    // select statement for items data 
       const copieddata_Items = await SELECT.from(Request_Item)
       .columns(
         `PR_Item_Number`,
@@ -158,19 +164,40 @@ module.exports = cds.service.impl(async function () {
         `PurOrg`, 
         `Plant`,
         `Status`,
+        `Quantity`,
       ).where({ _Header_ID: req.params[0].ID });
 
-      const copieddata_media = await SELECT.from(media).where({ _HeaderAttachments_ID: req.params[0].ID });
+      if (Object.keys(copieddata_Items).length != 0) {
+        // adding the generated id to the copieddata_Items so that we can join items and header
+        copieddata_Items[0]._Header_ID = ID;
+        // added header data composition entries 
+       copieddata[0]._Items = copieddata_Items;
+        }
 
+    
+    // select statement for media data 
+    const copieddata_media = await SELECT.from(media)
+    .columns(
+      `content`,
+      `fileName`,
+      `MediaType`,
+      `size`,
+      `url`,
+    ).where({ _HeaderAttachments_ID: req.params[0].ID });
 
+    if (Object.keys(copieddata_media).length != 0) {
+    // adding the generated id to the copieddata_Items so that we can join media and header
+    copieddata_media[0]._HeaderAttachments_ID = ID;
+    // added header data composition entries 
+    copieddata[0]._attachments = copieddata_media;
+    }
 
-    console.log(copieddata);
-    console.log(copieddata_Items)
-    console.log(copieddata_media)
 
     // create the same data with new req_no 
-
-    await INSERT.into(Request_Header).entries(copieddata , copieddata_Items)
+    await this.create(Request_Header).entries(copieddata);
+    return {
+      ID
+    }
 
   });
 

@@ -264,11 +264,14 @@ annotate service.Request_Header @(Common.SideEffects #ReactonItemDeletion: {
     TargetProperties: []  // This can be left empty or specify relevant properties if needed
 });
 
+
 annotate service.Request_Header @(Common.SideEffects #ReactOnCommentCreation: {
     SourceEntities  : ['_Comments'],      // The entity triggering the side effect (Comments)
     TargetEntities  : ['_Comments'],          // Refresh the current Request_Header entity
     TargetProperties: []                  // Refresh all relevant fields, no specific property defined
 });
+
+
 
 
 // disable the status field so that no one can edit during create or edit 
