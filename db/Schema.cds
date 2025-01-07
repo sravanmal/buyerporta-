@@ -86,10 +86,15 @@ context transaction {
         url                : String;
     }
 
+    // projections for product and plant 
+
     entity material  as projection on product_api.A_Product{
         key Product as ID,
-        ProductType as Desc,
-        to_Plant.Plant as plant,
+        ProductType as Desc
      };
 
+     entity plant  as projection on product_api.A_ProductPlant{
+        key Plant as plant,
+        
+     };
 }

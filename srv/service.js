@@ -130,6 +130,9 @@ module.exports = cds.service.impl(async function () {
     const updateitems = await SELECT.from(Request_Header).where({ ID: req.params[0].ID });;
     console.log(updateitems);
 
+
+    
+
   });
 
   // copy header 
@@ -200,5 +203,24 @@ module.exports = cds.service.impl(async function () {
     }
 
   });
+
+
+  // getting materialset and plantset data
+ 
+  const product_api = await cds.connect.to('OP_API_PRODUCT_SRV_0001');
+    const  { MaterialSet , PlantSet}  = this.entities;
+ 
+    this.on("READ",MaterialSet,async (req)=>{
+        req.query.where("Product <> ''");
+        req.query.SELECT.count = false;
+        return await product_api.run(req.query);
+    });
+ 
+    this.on("READ",PlantSet,async (req)=>{
+      req.query.where("Product <> ''");
+      req.query.SELECT.count = false;
+      return await product_api.run(req.query);
+  });
+
 
 });
