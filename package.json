@@ -8,11 +8,14 @@
   "dependencies": {
     "@cap-js/change-tracking": "^1.0.7",
     "@sap/cds": "^8",
-    "express": "^4"
+    "express": "^4",
+    "@cap-js/hana": "^1",
+    "@sap/xssec": "^4"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.7.0",
-    "@cap-js/sqlite": "^1"
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^8"
   },
   "scripts": {
     "start": "cds-serve",
@@ -20,5 +23,21 @@
   },
   "sapux": [
     "app/buyerportal"
-  ]
+  ],
+  "cds": {
+    "requires": {
+      "OP_API_PRODUCT_SRV_0001": {
+        "kind": "odata-v2",
+        "model": "srv/external/OP_API_PRODUCT_SRV_0001",
+        "credentials": {
+          "destination": "S4H",
+          "path": "/sap/opu/odata/sap/API_PRODUCT_SRV"
+        }
+      },
+      "auth": "xsuaa"
+    },
+    "sql": {
+      "native_hana_associations": false
+    }
+  }
 }

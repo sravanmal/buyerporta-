@@ -1,12 +1,12 @@
-code;symbol;name;descr;
-EUR;€;Euro;European Euro
-USD;$;US Dollar;United States Dollar
-CAD;$;Canadian Dollar;Canadian Dollar
-AUD;$;Australian Dollar;Australian Dollar
-GBP;£;British Pound;Great Britain Pound
-ILS;₪;Shekel;Israeli New Shekel
-INR;₹;Rupee;Indian Rupee
-QAR;﷼;Riyal;Katar Riyal
-SAR;﷼;Riyal;Saudi Riyal
-JPY;¥;Yen;Japanese Yen
-CNY;¥;Yuan;Chinese Yuan Renminbi
+code,symbol,name,descr,minorUnit
+EUR,€,Euro,European Euro,2
+USD,$,US Dollar,United States Dollar,0
+CAD,$,Canadian Dollar,Canadian Dollar,2
+AUD,$,Australian Dollar,Australian Dollar,2
+GBP,£,British Pound,Great Britain Pound,2
+ILS,₪,Shekel,Israeli New Shekel,2
+INR,₹,Rupee,Indian Rupee,2
+QAR,﷼,Riyal,Katar Riyal,2
+SAR,﷼,Riyal,Saudi Riyal,2
+JPY,¥,Yen,Japanese Yen,0
+CNY,¥,Yuan,Chinese Yuan Renminbi,2
